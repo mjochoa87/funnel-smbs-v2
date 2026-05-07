@@ -131,6 +131,10 @@ tr:hover td{background:#fafbff}
 .rank-2{background:var(--g100);color:var(--g800)}
 .rank-3{background:#faeeda;color:#854F0B}
 .rank-other{background:var(--g50);color:var(--g600)}
+
+.fac-alerta{display:flex;align-items:center;gap:8px;background:#fee2e2;border:1.5px solid #fca5a5;border-radius:8px;padding:8px 12px;margin-bottom:10px;font-size:12px;color:#991b1b;font-weight:600}
+.fac-ok{display:flex;align-items:center;gap:8px;background:#dcfce7;border:1.5px solid #86efac;border-radius:8px;padding:8px 12px;margin-bottom:10px;font-size:12px;color:#166534;font-weight:600}
+.fac-warn{display:flex;align-items:center;gap:8px;background:#fef9c3;border:1.5px solid #fde047;border-radius:8px;padding:8px 12px;margin-bottom:10px;font-size:12px;color:#a16207;font-weight:600}
 .empty{text-align:center;padding:2rem 1rem;color:var(--g400);font-size:13px}
 .divider{border:none;border-top:1px solid var(--g200);margin:10px 0}
 .rowf{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
@@ -181,7 +185,7 @@ tr:hover td{background:#fafbff}
     </div>
     <div class="card"><div class="card-title">📋 Cartera</div>
       <div class="tw"><table>
-        <thead><tr><th>Comercio</th><th>Cust ID</th><th>Asesor</th><th>Cohorte</th><th>Estado</th><th>Acción</th><th>Tasa proc.</th><th>Round</th><th>DC Teórico</th><th>DC M-1</th><th>DC Increm.</th><th></th></tr></thead>
+        <thead><tr><th>Comercio</th><th>Cust ID</th><th>Asesor</th><th>Cohorte</th><th>Estado</th><th>Acción</th><th>Tasa proc.</th><th>Round</th><th>DC Teórico</th><th>DC M-1</th><th>DC Increm.</th><th>Días sin fac.</th><th></th></tr></thead>
         <tbody id="pipe-body"></tbody>
       </table></div>
     </div>
@@ -229,27 +233,70 @@ tr:hover td{background:#fafbff}
         <div class="fg"><label>Tasa de procesamiento (débito + 1 pago)</label>
           <select id="c-tasa-proc" onchange="calcDCForm()">
             <option value="">Seleccionar tasa proc...</option>
-            <option value="mar_abierto">Mar abierto — 2,03%</option><option value="nivel1">Nivel 1 — 2,03%</option>
-            <option value="nivel2">Nivel 2 — 1,75%</option><option value="nivel3">Nivel 3 — 1,47%</option>
-            <option value="nivel4">Nivel 4 — 1,24%</option><option value="nivel5">Nivel 5 — 0,82%</option>
-            <option value="nivel6">Nivel 6 — 0,45%</option><option value="plazos_largos">Plazos Largos — 0,30%</option>
-            <option value="tag_pl_n1">Tag PL-N1 — 2,03%</option><option value="tag_pl_n3">Tag PL-N3 — 1,47%</option>
-            <option value="tag_pl_n6">Tag PL-N6 — 0,45%</option><option value="promo_cuotas_t">Promo Cuotas — 0,45%</option>
-            <option value="suscripciones">Suscripciones — 0,82%</option>
+            <optgroup label="── Estándar ──">
+              <option value="mar_abierto">Mar abierto — 2,03%</option>
+              <option value="nivel1">Nivel 1 — 2,03%</option><option value="nivel2">Nivel 2 — 1,75%</option>
+              <option value="nivel3">Nivel 3 — 1,47%</option><option value="nivel4">Nivel 4 — 1,24%</option>
+              <option value="nivel5">Nivel 5 — 0,82%</option><option value="nivel6">Nivel 6 — 0,45%</option>
+            </optgroup>
+            <optgroup label="── Tasas Ecosistémicas ──">
+              <option value="eco_n1">Ecosist. N1 — 2,03%</option><option value="eco_n2">Ecosist. N2 — 1,75%</option>
+              <option value="eco_n3">Ecosist. N3 — 1,47%</option><option value="eco_n4">Ecosist. N4 — 1,24%</option>
+              <option value="eco_n5">Ecosist. N5 — 0,82%</option><option value="eco_n6">Ecosist. N6 — 0,45%</option>
+            </optgroup>
+            <optgroup label="── Especiales ──">
+              <option value="plazos_largos">Plazos Largos — 0,30%</option>
+              <option value="tag_pl_n1">Tag PL-N1 — 2,03%</option><option value="tag_pl_n3">Tag PL-N3 — 1,47%</option>
+              <option value="tag_pl_n6">Tag PL-N6 — 0,45%</option>
+              <option value="promo_cuotas_t">Promo Cuotas — 0,45%</option>
+              <option value="a1">1 a 1 — 0,35%</option>
+              <option value="suscripciones">Suscripciones — 0,45%</option>
+              <option value="promo_3meses">Promo 3 meses — 0,40%</option>
+              <option value="promo_parity">Promo Parity Nave — 0,35%</option>
+            </optgroup>
           </select>
         </div>
         <div class="fg"><label>Tasa de financing (round)</label>
           <select id="c-tasa-round" onchange="calcDCForm()">
-            <option value="">Seleccionar round...</option>
-            <option value="mar_abierto_fin">Mar abierto fin. — 7,04%</option>
-            <option value="r1_mar">R1 Mar abierto — 6,74%</option><option value="r1_n2">R1 Nivel 2 — 6,55%</option><option value="r1_n3">R1 Nivel 3 — 6,46%</option><option value="r1_n4">R1 Nivel 4 — 6,36%</option><option value="r1_n5">R1 Nivel 5 — 5,90%</option><option value="r1_n6">R1 Nivel 6 — 5,43%</option>
-            <option value="r2_mar">R2 Mar abierto — 6,01%</option><option value="r2_n2">R2 Nivel 2 — 5,82%</option><option value="r2_n3">R2 Nivel 3 — 5,73%</option><option value="r2_n4">R2 Nivel 4 — 5,63%</option><option value="r2_n5">R2 Nivel 5 — 5,17%</option><option value="r2_n6">R2 Nivel 6 — 4,70%</option>
-            <option value="r3_mar">R3 Mar abierto — 5,31%</option><option value="r3_n3">R3 Nivel 3 — 4,94%</option><option value="r3_n4">R3 Nivel 4 — 4,47%</option><option value="r3_n5">R3 Nivel 5 — 4,01%</option><option value="r3_n6">R3 Nivel 6 — 3,98%</option>
-            <option value="r4_mar">R4 Mar abierto — 4,71%</option><option value="r4_n5">R4 Nivel 5 — 3,41%</option><option value="r4_n6">R4 Nivel 6 — 3,42%</option>
-            <option value="r5_mar">R5 Mar abierto — 3,73%</option><option value="r5_n5">R5 Nivel 5 — 2,44%</option><option value="r5_n6">R5 Nivel 6 — 2,45%</option>
-            <option value="r6_n5">R6 Nivel 5 — 2,15%</option><option value="r6_n6">R6 Nivel 6 — 1,70%</option>
-            <option value="a1_mar">1 a 1 Mar abierto — 3,82%</option><option value="a1_n5">1 a 1 Nivel 5 — 2,98%</option><option value="a1_n6">1 a 1 Nivel 6 — 2,51%</option><option value="a1_pl">1 a 1 Plazos Largos — 2,24%</option>
-            <option value="promo_cuotas_fin">Promo Cuotas fin. — 5,43%</option>
+            <option value="">Seleccionar round/financing...</option>
+            <optgroup label="── Mar abierto ──">
+              <option value="mar_abierto_fin">Mar abierto — 7,04%</option>
+              <option value="r3_mar">R3 Mar abierto — 5,31%</option><option value="r4_mar">R4 Mar abierto — 4,71%</option><option value="r5_mar">R5 Mar abierto — 3,73%</option>
+            </optgroup>
+            <optgroup label="── Rounds Nivel 1 ──">
+              <option value="r3_n1">R3 N1 — 5,12%</option><option value="r4_n1">R4 N1 — 4,52%</option><option value="r5_n1">R5 N1 — 3,55%</option>
+            </optgroup>
+            <optgroup label="── Rounds Nivel 2 ──">
+              <option value="r3_n2">R3 N2 — 5,03%</option><option value="r4_n2">R4 N2 — 4,43%</option><option value="r5_n2">R5 N2 — 3,46%</option>
+            </optgroup>
+            <optgroup label="── Rounds Nivel 3 ──">
+              <option value="r3_n3">R3 N3 — 4,94%</option><option value="r4_n3">R4 N3 — 4,34%</option><option value="r5_n3">R5 N3 — 3,36%</option>
+            </optgroup>
+            <optgroup label="── Rounds Nivel 4 ──">
+              <option value="r3_n4">R3 N4 — 4,47%</option><option value="r4_n4">R4 N4 — 3,87%</option><option value="r5_n4">R5 N4 — 2,90%</option>
+            </optgroup>
+            <optgroup label="── Rounds Nivel 5 ──">
+              <option value="r3_n5">R3 N5 — 4,01%</option><option value="r4_n5">R4 N5 — 3,41%</option><option value="r5_n5">R5 N5 — 2,44%</option>
+            </optgroup>
+            <optgroup label="── Rounds Nivel 6 ──">
+              <option value="r3_n6">R3 N6 — 3,98%</option><option value="r4_n6">R4 N6 — 3,42%</option><option value="r5_n6">R5 N6 — 2,45%</option>
+            </optgroup>
+            <optgroup label="── Rounds Ecosistémicas ──">
+              <option value="r3_eco_n1">R3 Eco N1 — 5,12%</option><option value="r3_eco_n2">R3 Eco N2 — 5,03%</option><option value="r3_eco_n3">R3 Eco N3 — 4,94%</option>
+              <option value="r3_eco_n4">R3 Eco N4 — 4,47%</option><option value="r3_eco_n5">R3 Eco N5 — 4,01%</option><option value="r3_eco_n6">R3 Eco N6 — 3,98%</option>
+              <option value="r4_eco_n1">R4 Eco N1 — 4,52%</option><option value="r4_eco_n2">R4 Eco N2 — 4,43%</option><option value="r4_eco_n3">R4 Eco N3 — 4,34%</option>
+              <option value="r4_eco_n4">R4 Eco N4 — 3,87%</option><option value="r4_eco_n5">R4 Eco N5 — 3,41%</option><option value="r4_eco_n6">R4 Eco N6 — 3,42%</option>
+              <option value="r5_eco_n1">R5 Eco N1 — 3,55%</option><option value="r5_eco_n2">R5 Eco N2 — 3,46%</option><option value="r5_eco_n3">R5 Eco N3 — 3,36%</option>
+              <option value="r5_eco_n4">R5 Eco N4 — 2,90%</option><option value="r5_eco_n5">R5 Eco N5 — 2,44%</option><option value="r5_eco_n6">R5 Eco N6 — 2,45%</option>
+            </optgroup>
+            <optgroup label="── Especiales ──">
+              <option value="promo_cuotas_fin">Promo Cuotas — 5,43%</option>
+              <option value="pl_mar">PL Mar abierto — 5,14%</option><option value="pl_n1">PL N1 — 6,74%</option><option value="pl_n3">PL N3 — 6,46%</option><option value="pl_n6">PL N6 — 5,43%</option>
+              <option value="a1_mar">1a1 Mar abierto — 5,14%</option><option value="a1_n1">1a1 N1 — 6,74%</option><option value="a1_n3">1a1 N3 — 6,46%</option><option value="a1_n6">1a1 N6 — 5,43%</option>
+              <option value="suscripciones_fin">Suscripciones fin. — 5,43%</option>
+              <option value="promo_3m_fin">Promo 3 meses fin. — 5,43%</option>
+              <option value="promo_parity_fin">Promo Parity fin. — 5,14%</option>
+            </optgroup>
           </select>
         </div>
       </div>
@@ -356,6 +403,17 @@ tr:hover td{background:#fafbff}
 
 <!-- ══ SEGUIMIENTO ══ -->
 <div id="tab-seguimiento" class="sec">
+  <div class="card" style="margin-bottom:14px">
+    <div class="card-title">📊 Reporte de facturación diaria (BigQuery)</div>
+    <div id="csv-fac-banner" class="csv-banner warn">
+      <div>
+        <div class="csv-info">⚠ Sin reporte cargado — las alertas de inactividad no estarán disponibles.</div>
+        <div style="font-size:11px;color:#92400e;margin-top:2px">CSV exportado desde BigQuery con columnas: <strong>cust_id</strong>, <strong>ultima_fecha_fac</strong>, <strong>dias_sin_facturar</strong></div>
+      </div>
+      <label class="btn btn-green btn-sm" style="cursor:pointer">📊 Cargar reporte<input type="file" accept=".csv" style="display:none" onchange="loadCSVFac(this)"></label>
+    </div>
+    <div style="font-size:11px;color:var(--g400)">Actualizá este reporte cada mañana. Alerta crítica a partir de <strong>3 días</strong> sin facturar 🚨, advertencia a partir de 1-2 días ⚠.</div>
+  </div>
   <div class="ar"><strong style="font-size:13px;color:var(--g600)">Asesor:</strong><div id="chips-seg"></div></div>
   <div id="seg-content"></div>
 </div>
@@ -403,8 +461,36 @@ tr:hover td{background:#fafbff}
 
 </div></div></div>
 <script>
-const TASAS_PROC={mar_abierto:{label:'Mar abierto',pct:2.03},nivel1:{label:'Nivel 1',pct:2.03},nivel2:{label:'Nivel 2',pct:1.75},nivel3:{label:'Nivel 3',pct:1.47},nivel4:{label:'Nivel 4',pct:1.24},nivel5:{label:'Nivel 5',pct:0.82},nivel6:{label:'Nivel 6',pct:0.45},plazos_largos:{label:'Plazos Largos',pct:0.30},tag_pl_n1:{label:'Tag PL-N1',pct:2.03},tag_pl_n3:{label:'Tag PL-N3',pct:1.47},tag_pl_n6:{label:'Tag PL-N6',pct:0.45},promo_cuotas_t:{label:'Promo Cuotas',pct:0.45},suscripciones:{label:'Suscripciones',pct:0.82}};
-const TASAS_ROUND={mar_abierto_fin:{label:'Mar abierto fin.',pct:7.04},r1_mar:{label:'R1 Mar abierto',pct:6.74},r1_n1:{label:'R1 N1',pct:6.74},r1_n2:{label:'R1 N2',pct:6.55},r1_n3:{label:'R1 N3',pct:6.46},r1_n4:{label:'R1 N4',pct:6.36},r1_n5:{label:'R1 N5',pct:5.90},r1_n6:{label:'R1 N6',pct:5.43},r2_mar:{label:'R2 Mar',pct:6.01},r2_n1:{label:'R2 N1',pct:6.01},r2_n2:{label:'R2 N2',pct:5.82},r2_n3:{label:'R2 N3',pct:5.73},r2_n4:{label:'R2 N4',pct:5.63},r2_n5:{label:'R2 N5',pct:5.17},r2_n6:{label:'R2 N6',pct:4.70},r3_mar:{label:'R3 Mar',pct:5.31},r3_n1:{label:'R3 N1',pct:5.12},r3_n2:{label:'R3 N2',pct:5.03},r3_n3:{label:'R3 N3',pct:4.94},r3_n4:{label:'R3 N4',pct:4.47},r3_n5:{label:'R3 N5',pct:4.01},r3_n6:{label:'R3 N6',pct:3.98},r4_mar:{label:'R4 Mar',pct:4.71},r4_n1:{label:'R4 N1',pct:4.52},r4_n2:{label:'R4 N2',pct:4.43},r4_n3:{label:'R4 N3',pct:4.34},r4_n4:{label:'R4 N4',pct:3.87},r4_n5:{label:'R4 N5',pct:3.41},r4_n6:{label:'R4 N6',pct:3.42},r5_mar:{label:'R5 Mar',pct:3.73},r5_n1:{label:'R5 N1',pct:3.55},r5_n2:{label:'R5 N2',pct:3.46},r5_n3:{label:'R5 N3',pct:3.36},r5_n4:{label:'R5 N4',pct:2.90},r5_n5:{label:'R5 N5',pct:2.44},r5_n6:{label:'R5 N6',pct:2.45},r6_n5:{label:'R6 N5',pct:2.15},r6_n6:{label:'R6 N6',pct:1.70},a1_mar:{label:'1a1 Mar',pct:3.82},a1_n1:{label:'1a1 N1',pct:3.82},a1_n2:{label:'1a1 N2',pct:3.64},a1_n3:{label:'1a1 N3',pct:3.54},a1_n4:{label:'1a1 N4',pct:3.45},a1_n5:{label:'1a1 N5',pct:2.98},a1_n6:{label:'1a1 N6',pct:2.51},a1_pl:{label:'1a1 PL',pct:2.24},promo_cuotas_fin:{label:'Promo Cuotas fin.',pct:5.43}};
+const TASAS_PROC={
+  mar_abierto:{label:'Mar abierto',pct:2.03},
+  nivel1:{label:'Nivel 1',pct:2.03},nivel2:{label:'Nivel 2',pct:1.75},nivel3:{label:'Nivel 3',pct:1.47},
+  nivel4:{label:'Nivel 4',pct:1.24},nivel5:{label:'Nivel 5',pct:0.82},nivel6:{label:'Nivel 6',pct:0.45},
+  eco_n1:{label:'Tasas Ecosist. N1',pct:2.03},eco_n2:{label:'Tasas Ecosist. N2',pct:1.75},
+  eco_n3:{label:'Tasas Ecosist. N3',pct:1.47},eco_n4:{label:'Tasas Ecosist. N4',pct:1.24},
+  eco_n5:{label:'Tasas Ecosist. N5',pct:0.82},eco_n6:{label:'Tasas Ecosist. N6',pct:0.45},
+  plazos_largos:{label:'Plazos Largos',pct:0.30},
+  tag_pl_n1:{label:'Tag PL-N1',pct:2.03},tag_pl_n3:{label:'Tag PL-N3',pct:1.47},tag_pl_n6:{label:'Tag PL-N6',pct:0.45},
+  promo_cuotas_t:{label:'Promo Cuotas',pct:0.45},
+  a1:{label:'1 a 1',pct:0.35},
+  suscripciones:{label:'Suscripciones',pct:0.45},
+  promo_3meses:{label:'Promo 3 meses',pct:0.40},
+  promo_parity:{label:'Promo Parity Nave',pct:0.35}
+};
+const TASAS_ROUND={
+  mar_abierto_fin:{label:'Mar abierto',pct:7.04},
+  r3_mar:{label:'R3 Mar abierto',pct:5.31},r3_n1:{label:'R3 N1',pct:5.12},r3_n2:{label:'R3 N2',pct:5.03},r3_n3:{label:'R3 N3',pct:4.94},r3_n4:{label:'R3 N4',pct:4.47},r3_n5:{label:'R3 N5',pct:4.01},r3_n6:{label:'R3 N6',pct:3.98},
+  r3_eco_n1:{label:'R3 Eco N1',pct:5.12},r3_eco_n2:{label:'R3 Eco N2',pct:5.03},r3_eco_n3:{label:'R3 Eco N3',pct:4.94},r3_eco_n4:{label:'R3 Eco N4',pct:4.47},r3_eco_n5:{label:'R3 Eco N5',pct:4.01},r3_eco_n6:{label:'R3 Eco N6',pct:3.98},
+  r4_mar:{label:'R4 Mar abierto',pct:4.71},r4_n1:{label:'R4 N1',pct:4.52},r4_n2:{label:'R4 N2',pct:4.43},r4_n3:{label:'R4 N3',pct:4.34},r4_n4:{label:'R4 N4',pct:3.87},r4_n5:{label:'R4 N5',pct:3.41},r4_n6:{label:'R4 N6',pct:3.42},
+  r4_eco_n1:{label:'R4 Eco N1',pct:4.52},r4_eco_n2:{label:'R4 Eco N2',pct:4.43},r4_eco_n3:{label:'R4 Eco N3',pct:4.34},r4_eco_n4:{label:'R4 Eco N4',pct:3.87},r4_eco_n5:{label:'R4 Eco N5',pct:3.41},r4_eco_n6:{label:'R4 Eco N6',pct:3.42},
+  r5_mar:{label:'R5 Mar abierto',pct:3.73},r5_n1:{label:'R5 N1',pct:3.55},r5_n2:{label:'R5 N2',pct:3.46},r5_n3:{label:'R5 N3',pct:3.36},r5_n4:{label:'R5 N4',pct:2.90},r5_n5:{label:'R5 N5',pct:2.44},r5_n6:{label:'R5 N6',pct:2.45},
+  r5_eco_n1:{label:'R5 Eco N1',pct:3.55},r5_eco_n2:{label:'R5 Eco N2',pct:3.46},r5_eco_n3:{label:'R5 Eco N3',pct:3.36},r5_eco_n4:{label:'R5 Eco N4',pct:2.90},r5_eco_n5:{label:'R5 Eco N5',pct:2.44},r5_eco_n6:{label:'R5 Eco N6',pct:2.45},
+  promo_cuotas_fin:{label:'Promo Cuotas fin.',pct:5.43},
+  pl_mar:{label:'PL Mar abierto',pct:5.14},pl_n1:{label:'PL N1',pct:6.74},pl_n3:{label:'PL N3',pct:6.46},pl_n6:{label:'PL N6',pct:5.43},
+  a1_mar:{label:'1a1 Mar abierto',pct:5.14},a1_n1:{label:'1a1 N1',pct:6.74},a1_n3:{label:'1a1 N3',pct:6.46},a1_n6:{label:'1a1 N6',pct:5.43},
+  suscripciones_fin:{label:'Suscripciones fin.',pct:5.43},
+  promo_3m_fin:{label:'Promo 3 meses fin.',pct:5.43},
+  promo_parity_fin:{label:'Promo Parity fin.',pct:5.14}
+};
 
 const MESES_ES=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
 function getMesKey(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');}
@@ -429,7 +515,8 @@ const saved=JSON.parse(localStorage.getItem('funnel_v10')||'null');
 let ST=saved||{asesores:EQUIPO,comercios:[],gestionComentarios:{}};
 if(!ST.gestionComentarios)ST.gestionComentarios={};
 if(saved&&saved.asesores&&saved.asesores[0]&&saved.asesores[0].nombre==='Asesor 1'){ST.asesores=EQUIPO;save();}
-let csvData={},fAlt='todas',fAs='todos',fSeg='todos';
+let csvData={},csvFac={},fAlt='todas',fAs='todos',fSeg='todos';
+const DIAS_ALERTA=3;
 let cohortChart=null;
 
 function save(){localStorage.setItem('funnel_v10',JSON.stringify(ST))}
@@ -447,26 +534,60 @@ function semColor(p){return p>=100?'#16a34a':p>=80?'#ca8a04':'#dc2626';}
 document.getElementById('hdr-fecha').textContent=new Date().toLocaleDateString('es-AR',{day:'2-digit',month:'2-digit',year:'numeric'});
 document.getElementById('hdr-eq').textContent=ST.asesores.length+' asesores';
 
+function parseCSVRows(text){
+  // Parser CSV completo que respeta comillas y comas dentro de campos
+  const rows=[];const lines=text.split('\n');
+  for(const line of lines){
+    if(!line.trim())continue;
+    const cols=[];let cur='',inQ=false;
+    for(let i=0;i<line.length;i++){
+      const c=line[i];
+      if(c==='"'){
+        if(inQ&&line[i+1]==='"'){cur+='"';i++;}
+        else inQ=!inQ;
+      } else if(c===','&&!inQ){cols.push(cur);cur='';}
+      else cur+=c;
+    }
+    cols.push(cur);
+    rows.push(cols.map(c=>c.trim()));
+  }
+  return rows;
+}
+
 function loadCSV(input){
   const file=input.files[0];if(!file)return;
   const reader=new FileReader();
   reader.onload=function(e){
-    const lines=e.target.result.split('\n').filter(l=>l.trim());
-    if(!lines.length)return;
-    const headers=lines[0].split(',').map(h=>h.trim().toLowerCase().replace(/"/g,''));
-    const idxId=headers.findIndex(h=>h.includes('cust')||h==='id');
-    const idxTpv=headers.findIndex(h=>h.includes('tpv_m1')||h.includes('tpvm1'));
-    const idxDc=headers.findIndex(h=>h.includes('dc_m1')||h.includes('dcm1'));
-    if(idxId===-1){alert('No se encontró columna cust_id');return;}
+    const rows=parseCSVRows(e.target.result);
+    if(rows.length<2)return;
+    const headers=rows[0].map(h=>h.toLowerCase().replace(/"/g,'').trim());
+    // Buscar índices por nombre de columna
+    function findIdx(keys){for(const k of keys){const i=headers.findIndex(h=>h===k||h.includes(k));if(i>=0)return i;}return -1;}
+    const useId=findIdx(['cust_id','custid','cust id']);
+    const useNombre=findIdx(['nombre_comercio','nombre comercio']);
+    const useTpv=findIdx(['tpv_point']);
+    const useDc=findIdx(['dc_point']);
+    if(useId<0){alert('No se encontró columna Cust_Id en el CSV');return;}
+    // Limpiar número formato argentino: 1.234.567,89 → 1234567.89
+    function cleanNum(s){if(!s)return 0;return parseFloat(s.replace(/\./g,'').replace(',','.'))||0;}
     csvData={};
-    for(let i=1;i<lines.length;i++){
-      const cols=lines[i].split(',').map(c=>c.trim().replace(/"/g,''));
-      const id=cols[idxId];if(!id)continue;
-      csvData[id]={tpvM1:idxTpv>=0?cols[idxTpv]:'',dcM1:idxDc>=0?cols[idxDc]:''};
+    // Detectar y saltar fila de tipos si existe (empieza con 'string' o '1,')
+    let startRow=1;
+    if(rows.length>1){const r1=rows[1].join(',').toLowerCase();if(r1.startsWith('string')||r1.match(/^[0-9],[0-9]/))startRow=2;}
+    for(let i=startRow;i<rows.length;i++){
+      const cols=rows[i];
+      const id=String(cols[useId]||'').trim().replace(/"/g,'');
+      if(!id||id==='0'||id.toLowerCase()==='cust_id')continue;
+      csvData[id]={
+        nombre:useNombre>=0?(cols[useNombre]||'').replace(/"/g,''):'',
+        tpvM1:useTpv>=0?cleanNum(cols[useTpv]):0,
+        dcM1:useDc>=0?cleanNum(cols[useDc]):0
+      };
     }
     const n=Object.keys(csvData).length;
+    const sample=Object.entries(csvData).slice(0,2).map(([id,v])=>`${id}: ${v.nombre||'?'} | TPV: $${Math.round(parseFloat(v.tpvM1)||0).toLocaleString('es-AR')}`).join(' · ');
     const b=document.getElementById('csv-banner');b.className='csv-banner';
-    b.innerHTML=`<div><div class="csv-info">✓ Planilla cargada — ${n} comercios disponibles.</div></div><label class="btn btn-green btn-sm" style="cursor:pointer">🔄 Cambiar<input type="file" accept=".csv" style="display:none" onchange="loadCSV(this)"></label>`;
+    b.innerHTML=`<div><div class="csv-info">✓ Planilla cargada — ${n} comercios. Ej: ${sample}</div></div><label class="btn btn-green btn-sm" style="cursor:pointer">🔄 Cambiar<input type="file" accept=".csv" style="display:none" onchange="loadCSV(this)"></label>`;
   };
   reader.readAsText(file);
 }
@@ -476,11 +597,60 @@ function onCustIdChange(){
   if(csvData[id]){
     hint.className='autocomplete-hint show';
     const te=document.getElementById('c-tpv-m1'),de=document.getElementById('c-dc-m1');
-    te.value=csvData[id].tpvM1||'';de.value=csvData[id].dcM1||'';
-    te.className=csvData[id].tpvM1?'auto-filled':'';de.className=csvData[id].dcM1?'auto-filled':'';
+    const tpvVal=csvData[id].tpvM1||0;
+    const dcVal=csvData[id].dcM1||0;
+    te.value=tpvVal;de.value=dcVal;
+    te.className=tpvVal>0?'auto-filled':'';de.className=dcVal>0?'auto-filled':'';
+    const ne=document.getElementById('c-nombre');
+    if(csvData[id].nombre&&!ne.value){ne.value=csvData[id].nombre;ne.className='auto-filled';}
+    calcDCForm();
     document.getElementById('tpvm1-src').style.display='inline';document.getElementById('dcm1-src').style.display='inline';
     calcDCForm();
   }else{hint.className='autocomplete-hint';document.getElementById('tpvm1-src').style.display='none';document.getElementById('dcm1-src').style.display='none';}
+}
+
+function loadCSVFac(input){
+  const file=input.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=function(e){
+    const lines=e.target.result.split('\n').filter(l=>l.trim());
+    if(!lines.length)return;
+    const headers=lines[0].split(',').map(h=>h.trim().toLowerCase().replace(/"/g,''));
+    const idxId=headers.findIndex(h=>h.includes('cust')||h==='id');
+    const idxFecha=headers.findIndex(h=>h.includes('ultima')||h.includes('fecha')||h.includes('last'));
+    const idxDias=headers.findIndex(h=>h.includes('dias')||h.includes('days')||h.includes('inactiv'));
+    const idxTpvAcc=headers.findIndex(h=>h.includes('tpv_ult')||h.includes('tpv_acc')||h.includes('acumulado'));
+    const idxCantDias=headers.findIndex(h=>h.includes('cant_dias')||h.includes('cant_d')||h.includes('periodo'));
+    if(idxId===-1){alert('No se encontró columna cust_id en el CSV de facturación');return;}
+    csvFac={};
+    for(let i=1;i<lines.length;i++){
+      const cols=lines[i].split(',').map(c=>c.trim().replace(/"/g,''));
+      const id=cols[idxId];if(!id)continue;
+      const dias=idxDias>=0?parseInt(cols[idxDias])||0:0;
+      const fecha=idxFecha>=0?cols[idxFecha]:'';
+      const tpvAcc=idxTpvAcc>=0?parseFloat(cols[idxTpvAcc])||0:0;
+      const cantDias=idxCantDias>=0?parseInt(cols[idxCantDias])||1:1;
+      csvFac[id]={dias,fecha,tpvAcc,cantDias};
+    }
+    const n=Object.keys(csvFac).length;
+    const sinFac=Object.values(csvFac).filter(v=>v.dias>=DIAS_ALERTA).length;
+    const b=document.getElementById('csv-fac-banner');b.className='csv-banner';
+    b.innerHTML=`<div><div class="csv-info">✓ Reporte cargado — ${n} comercios · <span style="color:#dc2626;font-weight:700">${sinFac} con ${DIAS_ALERTA}+ días sin facturar</span></div></div><label class="btn btn-green btn-sm" style="cursor:pointer">🔄 Actualizar<input type="file" accept=".csv" style="display:none" onchange="loadCSVFac(this)"></label>`;
+    renderSeg();renderAlertas();updateDots();
+  };
+  reader.readAsText(file);
+}
+
+function getFacAlerta(custId){
+  if(!custId||!csvFac[custId])return null;
+  return csvFac[custId];
+}
+function getFacHTML(custId){
+  const f=getFacAlerta(custId);
+  if(!f)return'';
+  if(f.dias>=DIAS_ALERTA)return`<div class="fac-alerta">🚨 ${f.dias} días sin facturar${f.fecha?' — última vez: '+f.fecha:''}</div>`;
+  if(f.dias>=1)return`<div class="fac-warn">⚠ ${f.dias} día${f.dias>1?'s':''} sin facturar${f.fecha?' — última vez: '+f.fecha:''}</div>`;
+  return`<div class="fac-ok">✓ Facturó ayer${f.fecha?' ('+f.fecha+')':''}</div>`;
 }
 
 function calcDCVal(tpv,sd,sc,pk,rk){
@@ -490,7 +660,14 @@ function calcDCVal(tpv,sd,sc,pk,rk){
   return{deb,cuotas,total:deb+cuotas};
 }
 function getDC(c){return calcDCVal(parseFloat(c.tpv)||0,parseFloat(c.shareDeb)||0,parseFloat(c.shareCuotas)||0,c.tasaProc,c.tasaRound).total;}
-function getDCInc(c){return getDC(c)-(parseFloat(c.dcM1)||0);}
+function getDCInc(c){
+  // DC incremental solo para convertidos en seguimiento
+  if(c.estado!=='seguimiento')return 0;
+  return getDC(c)-(parseFloat(c.dcM1)||0);
+}
+function getDCIncTotal(asesor){
+  return ST.comercios.filter(c=>c.asesor===asesor&&c.estado==='seguimiento').reduce((s,c)=>s+Math.max(0,getDCInc(c)),0);
+}
 
 function calcDCForm(){
   const pk=document.getElementById('c-tasa-proc').value,rk=document.getElementById('c-tasa-round').value;
@@ -660,6 +837,7 @@ function renderPipeline(){
       <td style="font-weight:700;color:var(--purple-d);font-family:var(--mono)">${fmt(dc)}</td>
       <td style="font-family:var(--mono);font-size:12px;color:var(--g600)">${fmt(parseFloat(c.dcM1)||0)}</td>
       <td style="font-weight:700;font-family:var(--mono);color:${inc>=0?'#16a34a':'#dc2626'}">${fmt(inc)}</td>
+      <td>${(()=>{const f=getFacAlerta(c.custId);if(!f)return'<span style="color:var(--g400);font-size:11px">—</span>';if(f.dias>=DIAS_ALERTA)return`<span style="color:#dc2626;font-weight:700;font-family:var(--mono)">${f.dias}d 🚨</span>`;if(f.dias>=1)return`<span style="color:#ca8a04;font-weight:700;font-family:var(--mono)">${f.dias}d ⚠</span>`;return'<span style="color:#16a34a;font-size:11px">✓ Ok</span>';})()}</td>
       <td><button class="btn btn-sm" onclick="delC(${idx})" style="color:var(--g400);padding:3px 8px">✕</button></td>
     </tr>`;
   }).join('');
@@ -675,7 +853,8 @@ function renderCohortAlertas(){
     const dcTotal=conv.reduce((s,c)=>s+getDC(c),0);
     const asConCohort=ST.asesores.filter(a=>conv.some(c=>c.asesor===a.nombre));
     const objTotal=asConCohort.reduce((s,a)=>s+a.objetivo,0);
-    const pctCohort=objTotal>0?Math.min(Math.round(dcTotal/objTotal*100),999):0;
+    const dcIncCohort=conv.reduce((s,c)=>s+Math.max(0,getDCInc(c)),0);
+    const pctCohort=objTotal>0?Math.min(Math.round(dcIncCohort/objTotal*100),999):0;
     const byAsesor={};
     conv.forEach(c=>{if(!byAsesor[c.asesor])byAsesor[c.asesor]=0;byAsesor[c.asesor]+=getDC(c);});
     html+=`<div style="background:${ch.color};border:1.5px solid ${ch.border};border-radius:10px;padding:14px">
@@ -701,6 +880,12 @@ function renderCohortAlertas(){
 
 function getAlertas(){
   const lista=[];
+  ST.comercios.filter(c=>c.estado==='seguimiento').forEach(c=>{
+    const f=getFacAlerta(c.custId);
+    if(f&&f.dias>=DIAS_ALERTA){
+      lista.push({tipo:'critica',ico:'🚨',comercio:c.nombre,asesor:c.asesor,titulo:`Sin facturar hace ${f.dias} días`,desc:`Este comercio no tiene actividad de cobro hace ${f.dias} días consecutivos.`,meta:`Cust ID: ${c.custId||'—'}${f.fecha?' · Última fac: '+f.fecha:''}`});
+    }
+  });
   ST.comercios.forEach(c=>{
     const dc=getDC(c),inc=getDCInc(c);
     if(!c.tasaProc)lista.push({tipo:'critica',ico:'⚠️',comercio:c.nombre,asesor:c.asesor,titulo:'Sin tasa de procesamiento',desc:'DC incompleto.',meta:''});
@@ -711,14 +896,14 @@ function getAlertas(){
     if(inc>dc*0.5&&dc>0)lista.push({tipo:'positiva',ico:'🚀',comercio:c.nombre,asesor:c.asesor,titulo:'Excelente incremento',desc:'DC incremental supera el 50% del DC teórico.',meta:`Increm: ${fmt(inc)}`});
   });
   ST.asesores.forEach(a=>{
-    const dc=ST.comercios.filter(c=>c.asesor===a.nombre).reduce((s,c)=>s+getDC(c),0);
-    const p=a.objetivo>0?Math.min(Math.round(dc/a.objetivo*100),999):0;
+    const dcInc=getDCIncTotal(a.nombre);
+    const p=a.objetivo>0?Math.min(Math.round(dcInc/a.objetivo*100),999):0;
     if(a.objetivo>0){
       let tipo,ico,titulo;
       if(p>=100){tipo='positiva';ico='✅';titulo=`${a.nombre} — objetivo alcanzado`;}
       else if(p>=80){tipo='atencion';ico='⚡';titulo=`${a.nombre} — en camino (${p}%)`;}
       else{tipo='critica';ico='🎯';titulo=`${a.nombre} — bajo el 80%`;}
-      lista.push({tipo,ico,comercio:null,asesor:a.nombre,titulo,desc:'Alcance del DC mensual.',meta:`${fmt(dc)} / ${fmt(a.objetivo)}`,pct:p,esObj:true});
+      lista.push({tipo,ico,comercio:null,asesor:a.nombre,titulo,desc:'DC incremental acumulado de convertidos vs objetivo.',meta:`DC increm: ${fmt(dcInc)} / Obj: ${fmt(a.objetivo)}`,pct:p,esObj:true,dcInc});
     }
   });
   return lista;
@@ -749,6 +934,37 @@ function renderAlertas(){
     </div></div>`).join('');
 }
 
+function getForecasted(custId,tasaProc,tasaRound,shareDeb,shareCuotas){
+  const f=csvFac[custId];
+  if(!f||!f.tpvAcc||!f.cantDias)return null;
+  const hoy=new Date();
+  const ultimoDia=new Date(hoy.getFullYear(),hoy.getMonth()+1,0).getDate();
+  const diasRestantes=ultimoDia-hoy.getDate();
+  const promDiario=f.tpvAcc/f.cantDias;
+  const tpvForecast=f.tpvAcc+(promDiario*diasRestantes);
+  const res=calcDCVal(tpvForecast,parseFloat(shareDeb)||0,parseFloat(shareCuotas)||0,tasaProc,tasaRound);
+  return{tpv:tpvForecast,dc:res.total,diasRestantes,promDiario};
+}
+
+function isPotenciado(c){
+  // Reglas: TPV real supera M-1 en $2M, +30%, DC incremental positivo
+  const f=csvFac[c.custId];
+  if(!f||!f.tpvAcc)return null; // sin datos
+  const tpvM1=parseFloat(c.tpvM1)||0;
+  const tpvReal=f.tpvAcc;
+  const dcInc=getDCInc(c);
+  const supera2M=(tpvReal-tpvM1)>=2000000;
+  const supera30pct=tpvM1>0?(tpvReal/tpvM1-1)>=0.30:false;
+  const dcPositivo=dcInc>0;
+  return{potenciado:supera2M&&supera30pct&&dcPositivo,supera2M,supera30pct,dcPositivo,tpvReal,tpvM1,dcInc};
+}
+function potenciadoBadge(c){
+  const r=isPotenciado(c);
+  if(!r)return'<span class="badge bgr" style="font-size:10px">Sin datos BQ</span>';
+  if(r.potenciado)return'<span class="badge bg" style="font-size:11px;font-weight:700">⚡ Potenciado</span>';
+  return`<span class="badge br" style="font-size:10px" title="TPV +$2M: ${r.supera2M?'✓':'✗'} | +30%: ${r.supera30pct?'✓':'✗'} | DC+: ${r.dcPositivo?'✓':'✗'}">No potenciado</span>`;
+}
+
 function renderSeg(){
   const cohortKeys=Object.keys(COHORTS);
   const div=document.getElementById('seg-content');let html='';
@@ -776,14 +992,40 @@ function renderSeg(){
         const asesorObj=ST.asesores.find(a=>a.nombre===c.asesor);
         const dcAsesor=ST.comercios.filter(x=>x.asesor===c.asesor).reduce((s,x)=>s+getDC(x),0);
         const pctObj=asesorObj&&asesorObj.objetivo>0?Math.min(Math.round(dcAsesor/asesorObj.objetivo*100),999):0;
+        const forecast=getForecasted(c.custId,c.tasaProc,c.tasaRound,c.shareDeb,c.shareCuotas);
         html+=`<div class="card" style="margin-bottom:12px">
           <div class="card-title">
             <span>${c.nombre}</span>
             <span style="background:${cc.bg};color:${cc.tx};padding:2px 8px;border-radius:20px;font-size:11px;font-weight:700">${ini(c.asesor)}</span>
             ${tp?`<span class="badge bp" style="font-size:10px">${tp.label}</span>`:''}
             ${tr?`<span class="badge bt" style="font-size:10px">${tr.label}</span>`:''}
+            ${potenciadoBadge(c)}
             <span style="font-size:11px;color:var(--g400);margin-left:auto">DC teórico: <strong style="color:var(--purple-d)">${fmt(getDC(c))}/mes</strong></span>
           </div>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px">
+            <div style="background:var(--g50);border-radius:8px;padding:10px 12px">
+              <div style="font-size:10px;font-weight:600;color:var(--g400);margin-bottom:4px">CUST ID</div>
+              <div style="font-family:var(--mono);font-size:13px;font-weight:600;color:var(--dark)">${c.custId||'—'}</div>
+            </div>
+            <div style="background:var(--g50);border-radius:8px;padding:10px 12px">
+              <div style="font-size:10px;font-weight:600;color:var(--g400);margin-bottom:4px">TPV M-1</div>
+              <div style="font-family:var(--mono);font-size:13px;font-weight:600;color:var(--dark)">${fmt(parseFloat(c.tpvM1)||0)}</div>
+            </div>
+            <div style="background:var(--g50);border-radius:8px;padding:10px 12px">
+              <div style="font-size:10px;font-weight:600;color:var(--g400);margin-bottom:4px">DC M-1</div>
+              <div style="font-family:var(--mono);font-size:13px;font-weight:600;color:var(--dark)">${fmt(parseFloat(c.dcM1)||0)}</div>
+            </div>
+            <div style="background:var(--g50);border-radius:8px;padding:10px 12px">
+              <div style="font-size:10px;font-weight:600;color:var(--g400);margin-bottom:4px">DC INCREMENTAL</div>
+              <div style="font-family:var(--mono);font-size:13px;font-weight:600;color:${getDCInc(c)>=0?'#16a34a':'#dc2626'}">${fmt(getDCInc(c))}</div>
+            </div>
+          </div>
+          ${forecast?`<div style="background:#f5f3ff;border:1.5px solid #ddd6fe;border-radius:8px;padding:10px 14px;margin-bottom:12px;display:flex;gap:20px;flex-wrap:wrap;align-items:center">
+            <div style="font-size:11px;font-weight:700;color:var(--purple-d)">📈 FORECASTED AL CIERRE DEL MES</div>
+            <div style="font-size:12px;color:var(--dark)">TPV estimado: <strong style="font-family:var(--mono);color:var(--purple-d)">${fmt(forecast.tpv)}</strong></div>
+            <div style="font-size:12px;color:var(--dark)">DC estimado: <strong style="font-family:var(--mono);color:var(--purple-d)">${fmt(forecast.dc)}</strong></div>
+            <div style="font-size:11px;color:var(--g400)">Prom. diario: ${fmt(forecast.promDiario)} · ${forecast.diasRestantes} días restantes</div>
+          </div>`:''}
           <div class="obj-wrap" style="margin-bottom:14px">
             <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
               <span style="font-size:11px;font-weight:600;color:var(--g600)">Objetivo de ${c.asesor.split(' ')[0]} — ${fmt(dcAsesor)} / ${asesorObj?fmt(asesorObj.objetivo):'—'}</span>
@@ -792,6 +1034,7 @@ function renderSeg(){
             <div class="obj-bar-bg"><div class="obj-bar-fill ${semCls(pctObj)}" style="width:${Math.min(pctObj,100)}%"></div></div>
             <div class="obj-labels"><span>0%</span><span style="color:${semColor(pctObj)};font-weight:600">${pctObj}%</span><span>100%</span></div>
           </div>
+          ${getFacHTML(c.custId)}
           <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
             ${seg.map((s,mi)=>{
               const td=parseFloat(s.tpvDeb)||0,tc=parseFloat(s.tpvCuotas)||0;
@@ -944,8 +1187,8 @@ function renderEquipo(){
   document.getElementById('eq-obj').textContent=fmt(objT);
   document.getElementById('eq-body').innerHTML=ST.asesores.map((a,i)=>{
     const mis=ST.comercios.filter(c=>c.asesor===a.nombre);
-    const dc=mis.reduce((s,c)=>s+getDC(c),0),inc=mis.reduce((s,c)=>s+getDCInc(c),0);
-    const p=a.objetivo>0?Math.min(Math.round(dc/a.objetivo*100),999):0;
+    const dc=mis.reduce((s,c)=>s+getDC(c),0),inc=getDCIncTotal(a.nombre);
+    const p=a.objetivo>0?Math.min(Math.round(inc/a.objetivo*100),999):0;
     const faltante=Math.max(0,a.objetivo-dc);const cc=CC[i%CC.length];
     return`<tr>
       <td><div style="display:flex;align-items:center;gap:7px"><div class="avatar" style="background:${cc.bg};color:${cc.tx}">${ini(a.nombre)}</div><strong style="font-size:12px">${a.nombre}</strong></div></td>
